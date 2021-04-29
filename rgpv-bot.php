@@ -38,7 +38,7 @@ foreach($notification_panel->find('a[data-toggle=tab]') as $tabpanel){
 		}else{
 			$update->linkopen = false;
 		}
-		$update->category = $tabpanel->innertext;
+		$update->category = str_replace($find,$replace,$tabpanel->plaintext);
 		$update->notification = str_replace($find,$replace,$notification->plaintext);
 		array_push($notifications,$update);
 	}
