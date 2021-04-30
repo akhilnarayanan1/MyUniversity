@@ -5,7 +5,6 @@
 
 $botToken="xxxxxxxxx:xxxxxxxxxxxxxxx-x-xxxxxxxxxxxxxxxxx"; //Telegram bot token
 
-
 Class Database
 {
     private $username ;

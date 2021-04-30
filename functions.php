@@ -20,7 +20,7 @@ function checkIfUpdateAvailable($university_name, $groupName, $web_json_notifica
 	$db = new Database; 
 	$conn = $db->connect();
 	$currentDateTime = getCurrentDateTime();
-	$check_last_notifcation = $conn->prepare("SELECT json_notification FROM json_notifications ORDER BY date_time_created DESC LIMIT 1");
+	$check_last_notifcation = $conn->prepare("SELECT json_notification FROM json_notifications WHERE university_name='$university_name' ORDER BY date_time_created DESC LIMIT 1");
 	$check_last_notifcation->execute();
 	$db_json_notification = $check_last_notifcation->fetchColumn();
 

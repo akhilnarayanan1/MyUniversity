@@ -1,8 +1,8 @@
 <?php
 
-require_once "config.php";
-include "assets/htmldomparser/simple_html_dom.php";
-include "functions.php";
+require_once "../config.php";
+include "../assets/htmldomparser/simple_html_dom.php";
+include "../functions.php";
 
 $find = ["&amp;","&nbsp;"];
 $replace = ["&",""];
