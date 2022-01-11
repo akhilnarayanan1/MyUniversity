@@ -49,7 +49,6 @@ const runRGPV = async () => {
       if (!_.isEmpty(newNotificationsList)) newNotifications[key] = newNotificationsList;
     });
 
-    console.log(newNotifications);
     sendMessageToTelegram(telegramChannel, newNotifications, universityName);
 
     return [200, rgpvNotifications];
