@@ -19,6 +19,7 @@ interface UniversityNotifications {
 }
 
 interface EachNotification {
+  id?: number,
   notification?: string,
   // eslint-disable-next-line camelcase
   new_img?: string,
