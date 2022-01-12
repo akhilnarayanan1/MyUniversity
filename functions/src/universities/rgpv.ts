@@ -71,6 +71,7 @@ const scrapRGPV = (response: AxiosResponse, url: string) => {
     $(el.children).each((i, notification) => {
       // eslint-disable-next-line prefer-const
       let eachNotification: EachNotification = {};
+      eachNotification["id"] = i+1;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       $(notification.children).each((i, content) => {
