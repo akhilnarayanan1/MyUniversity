@@ -40,23 +40,19 @@ const runRGPV = async () => {
       );
     }
 
-    const removeId = (array: EachNotification[]) => {
-      return _.map(array, (object) =>
-        _.omit(object, ["id"])
-      );
+    const removeKeys = (notifications: UniversityNotifications) => {
+      let theseKeys: string[] = [];
+      _.forEach(notifications, (value, key) => {
+        const notificationsArray = [...Array(rgpvNotifications[key].length)].map((el, i) => {
+          return `${key}.${i++}.id`;
+        });
+        theseKeys = theseKeys.concat(notificationsArray);
+      });
+      return theseKeys;
     };
 
-    const modifiedRgpvNotifications: UniversityNotifications = {};
-    _.forEach(rgpvNotifications, (value, key) => {
-      modifiedRgpvNotifications[key] = removeId(rgpvNotifications[key]);
-    });
-
-    const modifiedLastDBNotification: UniversityNotifications = {};
-    _.forEach(lastDBNotification?.data, (value, key) => {
-      if (lastDBNotification?.data) {
-        modifiedLastDBNotification[key] = removeId(lastDBNotification.data[key]);
-      }
-    });
+    const modifiedRgpvNotifications = _.omit(rgpvNotifications, removeKeys(rgpvNotifications));
+    const modifiedLastDBNotification = _.omit(lastDBNotification.data, removeKeys(lastDBNotification?.data || {}));
 
     const newNotifications: UniversityNotifications = {};
 
