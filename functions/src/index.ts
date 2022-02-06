@@ -37,19 +37,19 @@ app.get("/:universityname", async (req, res) => {
 });
 
 
-app.get("/live/:universityname", async (req, res) => {
-  switch (req.params.universityname) {
-    case "rgpv":
-      // eslint-disable-next-line no-case-declarations
-      const [statusCode, rgpvNotifications] = await runRGPV();
-      return res.status(statusCode).json({"data": rgpvNotifications});
-    default:
-      return res.status(400).json({"message": "Invalid University Name"});
-  }
-});
+// app.get("/live/:universityname", async (req, res) => {
+//   switch (req.params.universityname) {
+//     case "rgpv":
+//       // eslint-disable-next-line no-case-declarations
+//       const [statusCode, rgpvNotifications] = await runRGPV();
+//       return res.status(statusCode).json({"data": rgpvNotifications});
+//     default:
+//       return res.status(400).json({"message": "Invalid University Name"});
+//   }
+// });
 
 exports.api = functions.https.onRequest(app);
-exports.api_scheduled = functions.pubsub.schedule("2 */1 * * *")
+exports.api_scheduled = functions.pubsub.schedule("30 */3 * * *")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .onRun(async (context) => {
       await runRGPV();

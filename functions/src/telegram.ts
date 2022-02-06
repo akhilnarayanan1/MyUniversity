@@ -12,24 +12,30 @@ const telegramSecret = functions.config().telegram.botsecret;
 const sendMessageToTelegram = (channelName: string, newNotifications: UniversityNotifications, universityName: string) => {
   // eslint-disable-next-line guard-for-in
   for (const tab in newNotifications) {
-      newNotifications[tab]?.map((doc) => {
-        let notificationMessage = "";
-        if (doc?.linkhref) {
-          notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>\n\n <a href='${doc?.linkhref}'>Click Here To View</a>`;
-        } else {
-          notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>`;
-        }
-        axios.post(`https://api.telegram.org/bot${telegramSecret}/sendMessage`, {
-          chat_id: channelName,
-          parse_mode: "HTML",
-          text: `${notificationMessage}`,
-        }).then(async (response) => {
-          if (response.status == 200) {
-            await admin.firestore().collection("telegram_updates").add(
-                {notification: doc, university: universityName, createdAt: admin.firestore.FieldValue.serverTimestamp()}
-            );
+      newNotifications[tab]?.map((doc, iternum) => {
+        setTimeout(() => {
+          let notificationMessage = "";
+          if (doc?.linkhref) {
+            notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>\n\n <a href='${doc?.linkhref}'>Click Here To View</a>`;
+          } else {
+            notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>`;
           }
-        });
+          axios.post(`https://api.telegram.org/bot${telegramSecret}/sendMessage`, {
+            chat_id: channelName,
+            parse_mode: "HTML",
+            text: `${notificationMessage}`,
+          }).then(async (response) => {
+            await admin.firestore().collection("telegram_updates").add(
+                {success: response.data.ok,
+                  message: {notification: doc, university: universityName, createdAt: admin.firestore.FieldValue.serverTimestamp()}}
+            );
+          }).catch(async (error)=>{
+            await admin.firestore().collection("telegram_updates").add(
+                {success: false, description: error.message,
+                  message: {notification: doc, university: universityName, createdAt: admin.firestore.FieldValue.serverTimestamp()}}
+            );
+          });
+        }, 3100*(iternum+1 || 0));
       });
   }
 };
