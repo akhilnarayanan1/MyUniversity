@@ -12,7 +12,7 @@ const telegramSecret = functions.config().telegram.botsecret;
 const sendMessageToTelegram = (channelName: string, newNotifications: UniversityNotifications, universityName: string) => {
   // eslint-disable-next-line guard-for-in
   for (const tab in newNotifications) {
-      newNotifications[tab]?.map((doc) => {
+      newNotifications[tab]?.map((doc, iternum) => {
         setTimeout(() => {
           let notificationMessage = "";
           if (doc?.linkhref) {
@@ -35,7 +35,7 @@ const sendMessageToTelegram = (channelName: string, newNotifications: University
                   message: {notification: doc, university: universityName, createdAt: admin.firestore.FieldValue.serverTimestamp()}}
             );
           });
-        }, 3100*(doc?.id || 0));
+        }, 3100*(iternum+1 || 0));
       });
   }
 };
