@@ -40,12 +40,30 @@ const runRGPV = async () => {
       );
     }
 
+    const removeId = (array: EachNotification[]) => {
+      return _.map(array, (object) =>
+        _.omit(object, ["id"])
+      );
+    };
+
+    const modifiedRgpvNotifications: UniversityNotifications = {};
+    _.forEach(rgpvNotifications, (value, key) => {
+      modifiedRgpvNotifications[key] = removeId(rgpvNotifications[key]);
+    });
+
+    const modifiedLastDBNotification: UniversityNotifications = {};
+    _.forEach(lastDBNotification?.data, (value, key) => {
+      if (lastDBNotification?.data) {
+        modifiedLastDBNotification[key] = removeId(lastDBNotification.data[key]);
+      }
+    });
+
     const newNotifications: UniversityNotifications = {};
 
     _.forEach(rgpvNotifications, (value, key) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-      const newNotificationsList = _.differenceWith(rgpvNotifications[key], lastDBNotification?.data[key], _.isEqual);
+      const newNotificationsList = _.differenceWith(modifiedRgpvNotifications[key], modifiedLastDBNotification[key], _.isEqual);
       if (!_.isEmpty(newNotificationsList)) newNotifications[key] = newNotificationsList;
     });
 
