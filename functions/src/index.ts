@@ -49,7 +49,7 @@ app.get("/:universityname", async (req, res) => {
 // });
 
 exports.api = functions.https.onRequest(app);
-exports.api_scheduled = functions.pubsub.schedule("30 */1 * * *")
+exports.api_scheduled = functions.pubsub.schedule("30 */3 * * *")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .onRun(async (context) => {
       await runRGPV();
