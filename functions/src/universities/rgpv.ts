@@ -43,7 +43,7 @@ const runRGPV = async () => {
     const removeKeys = (notifications: UniversityNotifications) => {
       let theseKeys: string[] = [];
       _.forEach(notifications, (value, key) => {
-        const notificationsArray = [...Array(rgpvNotifications[key].length)].map((el, i) => {
+        const notificationsArray = [...Array(notifications[key].length)].map((el, i) => {
           return `${key}.${i++}.id`;
         });
         theseKeys = theseKeys.concat(notificationsArray);
