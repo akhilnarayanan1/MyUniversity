@@ -8,7 +8,8 @@ import * as express from "express";
 const app = express();
 
 import {LastDBNotification, UniversityNotifications} from "./types";
-import {runRGPV} from "./universities/rgpv";
+import {runRGPV, documentNameRGPV} from "./universities/rgpv";
+import {getLastDBNotification} from "./functions";
 
 
 app.get("/:universityname", async (req, res) => {
@@ -16,13 +17,7 @@ app.get("/:universityname", async (req, res) => {
     switch (req.params.universityname) {
       case "rgpv": {
         let rgpvNotifications: UniversityNotifications | LastDBNotification = {};
-        const notificationRef = admin.firestore().collection("rgpv_notifications");
-        const notification = notificationRef.orderBy("createdAt", "desc").limit(1);
-
-        const querySnapshot = await notification.get();
-        const lastDBNotification: LastDBNotification = querySnapshot.docs?.map((doc) => {
-          return {id: doc.id, ...doc.data()};
-        })[0];
+        const {lastDBNotification} = await getLastDBNotification(documentNameRGPV);
         rgpvNotifications = lastDBNotification;
 
         return res.status(200).json(rgpvNotifications);

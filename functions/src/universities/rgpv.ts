@@ -8,6 +8,7 @@ import {getNewNotifications} from "../functions";
 
 const universityName = "RGPV";
 const telegramChannel = "@myrgpv";
+const documentNameRGPV = "rgpv_notifications";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const runRGPV = async () => {
@@ -17,7 +18,7 @@ const runRGPV = async () => {
 
     const rgpvNotifications: UniversityNotifications = scrapRGPV(response, url);
 
-    const newNotifications: UniversityNotifications = await getNewNotifications(rgpvNotifications, "rgpv_notifications");
+    const newNotifications: UniversityNotifications = await getNewNotifications(rgpvNotifications, documentNameRGPV);
 
     sendMessageToTelegram(telegramChannel, newNotifications, universityName);
 
@@ -78,4 +79,4 @@ const scrapRGPV = (response: AxiosResponse, url: string) => {
   return rgpvNotifications;
 };
 
-export {runRGPV, scrapRGPV};
+export {runRGPV, scrapRGPV, documentNameRGPV};

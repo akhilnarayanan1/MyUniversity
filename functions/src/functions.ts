@@ -7,14 +7,7 @@ import {LastDBNotification, UniversityNotifications} from "./types";
 const getNewNotifications = async (notifications: UniversityNotifications, dbCollection: string) => {
   const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
 
-  const notificationRef = admin.firestore().collection(dbCollection);
-  const notification = notificationRef.orderBy("createdAt", "desc").limit(1);
-
-  const querySnapshot = await notification.get();
-
-  const lastDBNotification: LastDBNotification = querySnapshot.docs?.map((doc) => {
-    return {id: doc.id, ...doc.data()};
-  })[0];
+  const {lastDBNotification, querySnapshot} = await getLastDBNotification(dbCollection);
 
   if (!querySnapshot.empty && _.isEqual(lastDBNotification?.data, notifications)) {
     admin.firestore().collection(dbCollection).doc(lastDBNotification.id || "").update({
@@ -50,4 +43,17 @@ const removeKeys = (notifications: UniversityNotifications) => {
   return theseKeys;
 };
 
-export {getNewNotifications};
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const getLastDBNotification = async (dbCollection: string) => {
+  const notificationRef = admin.firestore().collection(dbCollection);
+  const notification = notificationRef.orderBy("createdAt", "desc").limit(1);
+
+  const querySnapshot = await notification.get();
+  const lastDBNotification: LastDBNotification = querySnapshot.docs?.map((doc) => {
+    return {id: doc.id, ...doc.data()};
+  })[0];
+
+  return {lastDBNotification, querySnapshot};
+};
+
+export {getNewNotifications, getLastDBNotification};
