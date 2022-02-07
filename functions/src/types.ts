@@ -1,13 +1,6 @@
 import * as admin from "firebase-admin";
 
 interface LastDBNotification {
-    id: string,
-    createdAt: admin.firestore.Timestamp,
-    lastUpdatedAt: admin.firestore.Timestamp,
-    data: UniversityNotifications
-}
-
-interface LastDBNotificationOptional {
     id?: string,
     createdAt?: admin.firestore.Timestamp,
     lastUpdatedAt?: admin.firestore.Timestamp,
@@ -29,4 +22,4 @@ interface EachNotification {
 }
 
 // eslint-disable-next-line max-len
-export {LastDBNotification, LastDBNotificationOptional, UniversityNotifications, EachNotification};
+export {LastDBNotification, UniversityNotifications, EachNotification};

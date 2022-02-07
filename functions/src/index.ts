@@ -7,7 +7,7 @@ admin.initializeApp();
 import * as express from "express";
 const app = express();
 
-import {LastDBNotification, LastDBNotificationOptional, UniversityNotifications} from "./types";
+import {LastDBNotification, UniversityNotifications} from "./types";
 import {runRGPV} from "./universities/rgpv";
 
 
@@ -15,12 +15,12 @@ app.get("/:universityname", async (req, res) => {
   try {
     switch (req.params.universityname) {
       case "rgpv": {
-        let rgpvNotifications: UniversityNotifications | LastDBNotificationOptional = {};
+        let rgpvNotifications: UniversityNotifications | LastDBNotification = {};
         const notificationRef = admin.firestore().collection("rgpv_notifications");
         const notification = notificationRef.orderBy("createdAt", "desc").limit(1);
 
         const querySnapshot = await notification.get();
-        const lastDBNotification: LastDBNotification | LastDBNotificationOptional = querySnapshot.docs?.map((doc) => {
+        const lastDBNotification: LastDBNotification = querySnapshot.docs?.map((doc) => {
           return {id: doc.id, ...doc.data()};
         })[0];
         rgpvNotifications = lastDBNotification;
