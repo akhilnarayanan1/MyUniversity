@@ -19,8 +19,8 @@ const getNewNotifications = async (notifications: UniversityNotifications, dbCol
     );
   }
 
-  const modifiedNotifications: UniversityNotifications = _.omit(notifications, removeKeys(notifications));
-  const modifiedLastDBNotification: UniversityNotifications = _.omit(lastDBNotification?.data, removeKeys(lastDBNotification?.data || {}));
+  const modifiedNotifications: UniversityNotifications = _.pick(notifications, pickKeys(notifications));
+  const modifiedLastDBNotification: UniversityNotifications = _.pick(lastDBNotification?.data || {}, pickKeys(lastDBNotification?.data || {}));
 
   const newNotifications: UniversityNotifications = {};
 
@@ -32,13 +32,16 @@ const getNewNotifications = async (notifications: UniversityNotifications, dbCol
   return newNotifications;
 };
 
-const removeKeys = (notifications: UniversityNotifications) => {
+const pickKeys = (notifications: UniversityNotifications) => {
   let theseKeys: string[] = [];
   _.forEach(notifications, (value, key) => {
     const notificationsArray = [...Array(notifications[key].length)].map((el, i) => {
-      return `${key}.${i++}.id`;
+      const notificationPath = `${key}.${i}.notification`;
+      const urlPath = `${key}.${i}.linkhref`;
+      i++;
+      return [notificationPath, urlPath];
     });
-    theseKeys = theseKeys.concat(notificationsArray);
+    theseKeys = theseKeys.concat(...notificationsArray);
   });
   return theseKeys;
 };
