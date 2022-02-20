@@ -2,14 +2,13 @@
 import cheerio from "cheerio";
 import axios, {AxiosResponse} from "axios";
 
-import * as _ from "lodash";
-import * as admin from "firebase-admin";
-
-import {LastDBNotification, LastDBNotificationOptional, EachNotification, UniversityNotifications} from "../types";
+import {EachNotification, UniversityNotifications} from "../types";
 import {sendMessageToTelegram} from "../telegram";
+import {getNewNotifications} from "../functions";
 
 const universityName = "RGPV";
 const telegramChannel = "@myrgpv";
+const documentNameRGPV = "rgpv_notifications";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const runRGPV = async () => {
@@ -19,53 +18,7 @@ const runRGPV = async () => {
 
     const rgpvNotifications: UniversityNotifications = scrapRGPV(response, url);
 
-    const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
-
-    const notificationRef = admin.firestore().collection("rgpv_notifications");
-    const notification = notificationRef.orderBy("createdAt", "desc").limit(1);
-
-    const querySnapshot = await notification.get();
-
-    const lastDBNotification: LastDBNotification | LastDBNotificationOptional = querySnapshot.docs?.map((doc) => {
-      return {id: doc.id, ...doc.data()};
-    })[0];
-
-    if (!querySnapshot.empty && _.isEqual(lastDBNotification?.data, rgpvNotifications)) {
-      admin.firestore().collection("rgpv_notifications").doc(lastDBNotification.id || "").update({
-        lastUpdatedAt: serverTimestamp,
-      });
-    } else {
-      await admin.firestore().collection("rgpv_notifications").add(
-          {data: rgpvNotifications, createdAt: serverTimestamp, lastUpdatedAt: serverTimestamp}
-      );
-    }
-
-    const removeId = (array: EachNotification[]) => {
-      return _.map(array, (object) =>
-        _.omit(object, ["id"])
-      );
-    };
-
-    const modifiedRgpvNotifications: UniversityNotifications = {};
-    _.forEach(rgpvNotifications, (value, key) => {
-      modifiedRgpvNotifications[key] = removeId(rgpvNotifications[key]);
-    });
-
-    const modifiedLastDBNotification: UniversityNotifications = {};
-    _.forEach(lastDBNotification?.data, (value, key) => {
-      if (lastDBNotification?.data) {
-        modifiedLastDBNotification[key] = removeId(lastDBNotification.data[key]);
-      }
-    });
-
-    const newNotifications: UniversityNotifications = {};
-
-    _.forEach(rgpvNotifications, (value, key) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-      const newNotificationsList = _.differenceWith(modifiedRgpvNotifications[key], modifiedLastDBNotification[key], _.isEqual);
-      if (!_.isEmpty(newNotificationsList)) newNotifications[key] = newNotificationsList;
-    });
+    const newNotifications: UniversityNotifications = await getNewNotifications(rgpvNotifications, documentNameRGPV);
 
     sendMessageToTelegram(telegramChannel, newNotifications, universityName);
 
@@ -84,11 +37,9 @@ const scrapRGPV = (response: AxiosResponse, url: string) => {
   const domainpresent = ["https://", "http://"];
   const rgpvNotifications: UniversityNotifications = {};
   $("div div.tab-content").find("div.tab-pane").each((i, el) => {
-    // eslint-disable-next-line prefer-const
-    let nofiticationsArray: EachNotification[] = [];
+    const nofiticationsArray: EachNotification[] = [];
     $(el.children).each((i, notification) => {
-      // eslint-disable-next-line prefer-const
-      let eachNotification: EachNotification = {};
+      const eachNotification: EachNotification = {};
       eachNotification["id"] = i+1;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -128,4 +79,4 @@ const scrapRGPV = (response: AxiosResponse, url: string) => {
   return rgpvNotifications;
 };
 
-export {runRGPV, scrapRGPV};
+export {runRGPV, scrapRGPV, documentNameRGPV};

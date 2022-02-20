@@ -35,7 +35,7 @@ const sendMessageToTelegram = (channelName: string, newNotifications: University
                   message: {notification: doc, university: universityName, createdAt: admin.firestore.FieldValue.serverTimestamp()}}
             );
           });
-        }, 3100*(iternum+1 || 0));
+        }, 3100*(iternum+1));
       });
   }
 };
