@@ -20,8 +20,9 @@ const sendMessageToTelegram = (channelName: string, newNotifications: University
           } else {
             notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>`;
           }
+          notificationMessage += `\n\nJoin <a href="telegram.me/${channelName}">https://telegram.me/${channelName}</a> for regular updates`;
           axios.post(`https://api.telegram.org/bot${telegramSecret}/sendMessage`, {
-            chat_id: channelName,
+            chat_id: `@${channelName}`,
             parse_mode: "HTML",
             text: `${notificationMessage}`,
           }).then(async (response) => {
