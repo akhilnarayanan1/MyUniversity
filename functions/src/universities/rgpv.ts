@@ -7,7 +7,7 @@ import {sendMessageToTelegram} from "../telegram";
 import {getNewNotifications} from "../functions";
 
 const universityName = "RGPV";
-const telegramChannel = "@myrgpv";
+const telegramChannel = "myrgpv";
 const documentNameRGPV = "rgpv_notifications";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
