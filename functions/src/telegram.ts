@@ -16,15 +16,16 @@ const sendMessageToTelegram = (channelName: string, newNotifications: University
         setTimeout(() => {
           let notificationMessage = "";
           if (doc?.linkhref) {
-            notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>\n\n <a href='${doc?.linkhref}'>Click Here To View</a>`;
+            notificationMessage = `<strong>${tab}:</strong>\n\n "<em>${doc.notification} <a href='${doc?.linkhref}'>Click Here To View</a></em>"`;
           } else {
-            notificationMessage = `<strong>${tab}:</strong>\n\n <code>${doc.notification}</code>`;
+            notificationMessage = `<strong>${tab}:</strong>\n\n "<em>${doc.notification}</em>"`;
           }
-          notificationMessage += `\n\nJoin <a href="telegram.me/${channelName}">https://telegram.me/${channelName}</a> for regular updates`;
+          notificationMessage += `\n\nJoin <a href="telegram.me/${channelName}">https://telegram.me/${channelName}</a> for regular updates!`;
           axios.post(`https://api.telegram.org/bot${telegramSecret}/sendMessage`, {
             chat_id: `@${channelName}`,
             parse_mode: "HTML",
             text: `${notificationMessage}`,
+            disable_web_page_preview: true,
           }).then(async (response) => {
             await admin.firestore().collection("telegram_updates").add(
                 {success: response.data.ok,
