@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import cheerio from "cheerio";
+import {load} from "cheerio";
 import axios, {AxiosResponse} from "axios";
 
 import {EachNotification, UniversityNotifications} from "../types";
@@ -32,7 +32,7 @@ const runRGPV = async () => {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const scrapRGPV = (response: AxiosResponse, url: string) => {
-  const $ = cheerio.load(response.data);
+  const $ = load(response.data);
   const downloadable = [".pdf", ".xlsx", ".xls"];
   const domainpresent = ["https://", "http://"];
   const rgpvNotifications: UniversityNotifications = {};
