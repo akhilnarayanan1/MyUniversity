@@ -25,7 +25,6 @@ const sendMessageToTelegram = (channelName: string, newNotifications: University
             chat_id: `@${channelName}`,
             parse_mode: "HTML",
             text: `${notificationMessage}`,
-            disable_web_page_preview: true,
           }).then(async (response) => {
             await admin.firestore().collection("telegram_updates").add(
                 {success: response.data.ok,
