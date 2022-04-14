@@ -21,6 +21,7 @@ This should run the emulator with no error if all done correctly.
 
 #### Universities Added
 - Rajiv Gandhi Proudyogiki Vishwavidyalaya (RGPV)
+- Dr. Babasaheb Ambedkar Technological University (DBATU )
 
 you can raise an enhanment request for your respective university, I 'll try to add asap.
 

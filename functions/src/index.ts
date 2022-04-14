@@ -9,6 +9,7 @@ const app = express();
 
 import {LastDBNotification, UniversityNotifications} from "./types";
 import {runRGPV, documentNameRGPV} from "./universities/rgpv";
+import {runDBATU, documentNameDBATU} from "./universities/dbatu";
 import {getLastDBNotification} from "./functions";
 
 
@@ -21,6 +22,13 @@ app.get("/:universityname", async (req, res) => {
         rgpvNotifications = lastDBNotification;
 
         return res.status(200).json(rgpvNotifications);
+      }
+      case "dbatu": {
+        let dbatuNotifications: UniversityNotifications | LastDBNotification = {};
+        const {lastDBNotification} = await getLastDBNotification(documentNameDBATU);
+        dbatuNotifications = lastDBNotification;
+
+        return res.status(200).json(dbatuNotifications);
       }
       default:
         return res.status(400).json({"message": "Invalid University Name"});
@@ -36,18 +44,29 @@ app.get("/:universityname", async (req, res) => {
 //   switch (req.params.universityname) {
 //     case "rgpv":
 //       // eslint-disable-next-line no-case-declarations
-//       const [statusCode, rgpvNotifications] = await runRGPV();
-//       return res.status(statusCode).json({"data": rgpvNotifications});
+//       const [statusCodeRGPV, rgpvNotifications] = await runRGPV();
+//       return res.status(statusCodeRGPV).json({"data": rgpvNotifications});
+//     case "dbatu":
+//       // eslint-disable-next-line no-case-declarations
+//       const [statusCodeDBATU, dbatuNotifications] = await runDBATU();
+//       return res.status(statusCodeDBATU).json({"data": dbatuNotifications});
 //     default:
 //       return res.status(400).json({"message": "Invalid University Name"});
 //   }
 // });
 
 exports.api = functions.https.onRequest(app);
-exports.api_scheduled = functions.pubsub.schedule("30 */3 * * *")
+exports.api_scheduled_rgpv = functions.pubsub.schedule("30 */2 * * *")
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .onRun(async (context) => {
       await runRGPV();
+      return null;
+    });
+
+exports.api_scheduled_dbatu = functions.pubsub.schedule("30 */2 * * *")
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .onRun(async (context) => {
+      await runDBATU();
       return null;
     });
 
